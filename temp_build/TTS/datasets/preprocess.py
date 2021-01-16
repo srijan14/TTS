@@ -13,13 +13,13 @@ def load_meta_data(datasets):
         root_path = dataset['path']
         meta_file_train = dataset['meta_file_train']
         meta_file_val = dataset['meta_file_val']
-        # preprocessor = get_preprocessor_by_name(name)
+        preprocessor = get_preprocessor_by_name(name)
 
-        meta_data_train = sheba(root_path, meta_file_train)
+        meta_data_train = preprocessor(root_path, meta_file_train)
         if meta_file_val is None:
             meta_data_eval, meta_data_train = split_dataset(meta_data_train)
         else:
-            meta_data_eval = sheba(root_path, meta_file_val)
+            meta_data_eval = preprocessor(root_path, meta_file_val)
         meta_data_train_all += meta_data_train
         meta_data_eval_all += meta_data_eval
     return meta_data_train_all, meta_data_eval_all
@@ -27,9 +27,6 @@ def load_meta_data(datasets):
 
 def get_preprocessor_by_name(name):
     """Returns the respective preprocessing function."""
-    print(name)
-    import pdb
-    pdb.set_trace()
     thismodule = sys.modules[__name__]
     return getattr(thismodule, name.lower())
 
@@ -126,19 +123,6 @@ def mailabs(root_path, meta_files=None):
                     raise RuntimeError("> File %s does not exist!"%(wav_file))
     return items
 
-def sheba(root_path, meta_file):
-    """Normalizes the Nancy meta data file to TTS format"""
-    txt_file = os.path.join(root_path, meta_file)
-    items = []
-    speaker_name = "sheba"
-    with open(txt_file, 'r') as ttf:
-        for line in ttf:
-            cols = line.split('|')
-            # wav_file = os.path.join(root_path, 'wavs', cols[0] + '.wav')
-            wav_file = cols[0]
-            text = cols[1]
-            items.append([text, wav_file, speaker_name])
-    return items
 
 def ljspeech(root_path, meta_file):
     """Normalizes the Nancy meta data file to TTS format"""
