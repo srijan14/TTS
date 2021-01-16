@@ -123,6 +123,19 @@ def mailabs(root_path, meta_files=None):
                     raise RuntimeError("> File %s does not exist!"%(wav_file))
     return items
 
+def sheba(root_path, meta_file):
+    """Normalizes the Nancy meta data file to TTS format"""
+    txt_file = os.path.join(root_path, meta_file)
+    items = []
+    speaker_name = "sheba"
+    with open(txt_file, 'r') as ttf:
+        for line in ttf:
+            cols = line.split('|')
+            # wav_file = os.path.join(root_path, 'wavs', cols[0] + '.wav')
+            wav_file = cols[0]
+            text = cols[1]
+            items.append([text, wav_file, speaker_name])
+    return items
 
 def ljspeech(root_path, meta_file):
     """Normalizes the Nancy meta data file to TTS format"""
